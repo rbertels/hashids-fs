@@ -1,11 +1,11 @@
 # Hashids-fs
 A hashids implementation in F#.
 It allows the encoding of one or more numbers into a single YouTube-like hash.
-Check http://hashids.org for implementations in other languages.
+Please visit http://hashids.org for implementations in other languages.
 
 ## Usage
 
-### Open the namespace
+### Open the Hashids namespace
 ```fsharp
 open Hashids
 ```
@@ -14,7 +14,7 @@ A HashidConfiguration stores the salt, minimum hash length, alphabet, and separa
 ```fsharp
 let config = 
     HashidConfiguration.create 
-        { Salt = "my secret salt"
+        { Salt = "zupdog"
           MinimumHashLength = 8
           Alphabet = "qwertyiopasdfghjkl"
           Separators = "zxcvbnm" }
