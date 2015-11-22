@@ -15,9 +15,9 @@ A HashidConfiguration stores the salt, minimum hash length, alphabet, and separa
 let config = 
     HashidConfiguration.create 
         { Salt = "zupdog"
-          MinimumHashLength = 8
-          Alphabet = "qwertyiopasdfghjkl"
-          Separators = "zxcvbnm" }
+          MinimumHashLength = 0
+          Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+          Separators = "cfhistuCFHISTU" }
 ```
 Alternatively, the values from the defaultOptions record can be modified.
 ```fsharp
