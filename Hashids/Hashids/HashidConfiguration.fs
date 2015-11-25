@@ -41,7 +41,7 @@ module HashidConfiguration =
         { /// The alphabet used to generate the ids.
           Alphabet : string
           /// The separators used to generate the ids.
-          Separators : array<char> //string
+          Separators : array<char> 
           /// The salt used to generate the ids.
           Salt : string
           /// The minimum length of the ids.

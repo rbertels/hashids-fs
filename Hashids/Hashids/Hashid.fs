@@ -10,7 +10,7 @@ module Hashid =
     type private HashAccumulator = 
         { Alphabet : string
           Index : int64
-          Hash : string }
+          Id : string }
 
     // Accumulator used to unhash numbers.
     type private UnhashAccumulator = 
@@ -26,12 +26,12 @@ module Hashid =
         | 0L -> hash
         | x -> hashNumber x alphabet hash
     
-    // Unhashes a number.
-    let private unhashNumber (hash : string) (alphabet : string) = 
-        hash
+    // Unhashes a part of an id.
+    let private unhashNumber (idpart : string) (alphabet : string) = 
+        idpart
         |> Seq.fold (fun acc (character : char) -> 
                let pos = alphabet.IndexOf(character) |> int64
-               (fst (acc) + pos * pown (length alphabet) (hash.Length - snd (acc) - 1), (snd (acc) + 1))) (0L, 0)
+               (fst (acc) + pos * pown (length alphabet) (idpart.Length - snd (acc) - 1), (snd (acc) + 1))) (0L, 0)
         |> fst 
     
     // Encodes all provided numbers.
@@ -44,21 +44,21 @@ module Hashid =
             let nextAccumulator = 
                 { Alphabet = tempalpha
                   Index = acc.Index + 1L
-                  Hash = acc.Hash + last }
+                  Id = acc.Id + last }
             if (nextAccumulator.Index < numbers.LongLength) then 
                 let v = pickItem config.Separators (number % (int64 (last.[0]) + acc.Index))
-                { nextAccumulator with Hash = nextAccumulator.Hash + string v }
+                { nextAccumulator with Id = nextAccumulator.Id + string v }
             else nextAccumulator
 
         numbers |> Seq.fold (hasher) { Alphabet = config.Alphabet
                                        Index = 0L
-                                       Hash = initialValue }
+                                       Id = initialValue }
     
-    // Ensures that a given hash is equal to or greater than the minimal configured length.
-    let private ensureMinimalLength (config : HashidConfiguration) (seed : int64) (alphabet : string) (hash : string) = 
-        let guardCharacter index = pickItem config.Guards (hash.[index] |> int64 |> (+) seed) |> string
+    // Ensures that a given id is equal to or greater than the minimal configured length.
+    let private ensureMinimalLength (config : HashidConfiguration) (seed : int64) (alphabet : string) (id : string) = 
+        let guardCharacter index = pickItem config.Guards (id.[index] |> int64 |> (+) seed) |> string
         
-        let rec growHash amount alpha value = 
+        let rec growId amount alpha value = 
             let shuffledAlphabet = consistentShuffle alpha alpha
             let halfLength = shuffledAlphabet.Length / 2
             let preIndex = max (shuffledAlphabet.Length - (ceil (float amount / 2.0) |> int)) halfLength
@@ -67,29 +67,29 @@ module Hashid =
             let postfix = shuffledAlphabet.[0..postIndex - 1]
             let resized = prefix + value + postfix
             if resized.Length < config.MinimumLength then 
-                growHash (config.MinimumLength - resized.Length) shuffledAlphabet resized
+                growId (config.MinimumLength - resized.Length) shuffledAlphabet resized
             else resized
-        match max (config.MinimumLength - hash.Length) 0 with
-        | 0 -> hash
+        match max (config.MinimumLength - id.Length) 0 with
+        | 0 -> id
         | 1 -> 
             let prefix = guardCharacter 0
-            prefix + hash
+            prefix + id
         | 2 -> 
             let prefix = guardCharacter 0
             let postfix = guardCharacter 1
-            prefix + hash + postfix
+            prefix + id + postfix
         | x -> 
             let prefix = guardCharacter 0
             let postfix = guardCharacter 1
-            growHash (x - 2) alphabet (prefix + hash + postfix)
+            growId (x - 2) alphabet (prefix + id + postfix)
     
     // Removes the padding introduced to meet the minimal length requirements.
-    let private shrinkHash (config : HashidConfiguration) (hash : string) = 
-        let parts = hash.Split(config.Guards)
+    let private shrinkId (config : HashidConfiguration) (id : string) = 
+        let parts = id.Split(config.Guards)
         match parts.Length with
         | 1 -> parts.[0]
         | 2 | 3 -> parts.[1]
-        | _ -> failwith "Illegal hash"
+        | _ -> failwith "Illegal id"
 
     /// Validates the input numbers.
     let validateInput (numbers : array<int64>) =
@@ -105,25 +105,25 @@ module Hashid =
                 numbers
                 |> Seq.mapi (fun index number -> number % (int64 index + 100L))
                 |> Seq.sum
-            let lottery = pickCharacter config.Alphabet numberHash //|> string
+            let lottery = pickCharacter config.Alphabet numberHash 
             let encoded = encodeNumbers config lottery numbers
-            ensureMinimalLength config numberHash encoded.Alphabet encoded.Hash
+            ensureMinimalLength config numberHash encoded.Alphabet encoded.Id
             
     /// Decodes 64 bit numbers from an id.
     [<CompiledName("Decode")>]
     let decode64 (config : HashidConfiguration) (id : string) = 
-        let hashCore = shrinkHash config id
-        match hashCore |> Seq.tryHead with
+        let core = shrinkId config id
+        match core |> Seq.tryHead with
         | Some '\000' | None -> [||]
         | Some lottery ->
             let prefix = string lottery + config.Salt
-            hashCore.Substring(1).Split(config.Separators)
-            |> Array.scan (fun (acc : UnhashAccumulator) hash -> 
+            core.Substring(1).Split(config.Separators)
+            |> Array.scan (fun (acc : UnhashAccumulator) idpart -> 
                    let buffer = prefix + acc.Alphabet
                    let alphabet = consistentShuffle acc.Alphabet buffer.[0..acc.Alphabet.Length - 1]
                    { Alphabet = alphabet
-                     Number = unhashNumber hash alphabet }) { Alphabet = config.Alphabet
-                                                              Number = 0L }
+                     Number = unhashNumber idpart alphabet }) { Alphabet = config.Alphabet
+                                                                Number = 0L }
             |> Array.skip 1
             |> Array.map (fun acc -> acc.Number)
     
