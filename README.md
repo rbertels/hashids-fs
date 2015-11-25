@@ -1,6 +1,6 @@
 # Hashids-fs
 A hashids implementation in F#.
-It allows the encoding of one or more numbers into a single YouTube-like hash.
+It allows the encoding of one or more numbers into a single YouTube-like random string.
 Please visit http://hashids.org for implementations in other languages.
 
 ## Usage
@@ -41,3 +41,4 @@ The resulting id will be `rlVfvd`.
 ## Building
 Hashids-fs uses FAKE for building. (http://fsharp.github.io/FAKE/)
 Simply run `build.bat` and look for the files in the `build` folder.
+
