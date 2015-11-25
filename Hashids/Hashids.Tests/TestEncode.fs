@@ -24,7 +24,7 @@ let ``Encode passes with salt``() =
 let ``Encode resizes hash accordingly`` size result = 
     let config = 
         HashidConfiguration.create { HashidConfiguration.defaultOptions with Salt = "zupdog"
-                                                                             MinimumHashLength = size }
+                                                                             MinimumLength = size }
     Hashid.encode config [| 1337; 1447 |] |> should equal result
 
 [<TestCase([| -1 |], "")>]
@@ -50,3 +50,11 @@ let ``Encode returns correct hash`` numbers result =
 let ``Encode64 returns correct hash`` numbers result = 
     let config = HashidConfiguration.create { HashidConfiguration.defaultOptions with Salt = "zupdog" }
     Hashid.encode64 config numbers |> should equal result
+
+[<Test>]
+let ``Sample code is correct``() =
+    let config = HashidConfiguration.withSalt "this is my salt"
+    let id = Hashid.encode config [| 1; 2; 3 |]
+    let numbers = Hashid.decode config id
+    id |> should equal "laHquq"
+    numbers |> should equal [| 1; 2; 3 |]

@@ -4,9 +4,9 @@
 type HashidConfigurationOptions = 
     { /// The unique salt that will be used to hash ids.
       Salt : string
-      /// The minimum length of the generated hashes.
-      MinimumHashLength : int
-      /// The alphabet used to generate the hashes.
+      /// The minimum length of the generated ids.
+      MinimumLength : int
+      /// The alphabet used to generate the ids.
       /// There should be at least 4 unique characters in the alphabet that aren't separators.
       Alphabet : string
       /// The separator characters.
@@ -31,25 +31,25 @@ module HashidConfiguration =
     /// { HashidConfiguration.defaultOptions with Salt = "this is my salt" }.
     let defaultOptions = 
         { Salt = ""
-          MinimumHashLength = 0
+          MinimumLength = 0
           Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
           Separators = "cfhistuCFHISTU" }
     
-    /// The configuration used for hashing.
+    /// The configuration used for generating ids.
     /// Avoid instantiating and instread create a valid configuration by using HashidConfiguration.create.
     type HashidConfiguration = 
-        { /// The alphabet used to generate the hashes.
+        { /// The alphabet used to generate the ids.
           Alphabet : string
-          /// The separators used to generate the hashes.
+          /// The separators used to generate the ids.
           Separators : array<char> //string
-          /// The salt used to generate the hashes.
+          /// The salt used to generate the ids.
           Salt : string
-          /// The minimum length of the hashes.
-          MinimumHashLength : int
-          /// The guards used to generate the hashes.
+          /// The minimum length of the ids.
+          MinimumLength : int
+          /// The guards used to generate the ids.
           Guards : array<char> }
     
-    /// Validates if an alphabet meets the hash requirements.
+    /// Validates if an alphabet meets the requirements.
     /// Throws an exception if the alphabet is invalid.
     let validateAlphabet alphabet = 
         match alphabet
@@ -107,7 +107,7 @@ module HashidConfiguration =
             let guards = options.Separators.[0..guardCount - 1]
             let separators = options.Separators.[guardCount..]
             { Alphabet = options.Alphabet
-              MinimumHashLength = options.MinimumHashLength
+              MinimumLength = options.MinimumLength
               Separators = separators.ToCharArray()
               Guards = guards.ToCharArray()
               Salt = options.Salt }
@@ -115,7 +115,7 @@ module HashidConfiguration =
             let guards = options.Alphabet.[0..guardCount - 1]
             let alphabet = options.Alphabet.[guardCount..]
             { Alphabet = alphabet
-              MinimumHashLength = options.MinimumHashLength
+              MinimumLength = options.MinimumLength
               Separators = options.Separators.ToCharArray()
               Guards = guards.ToCharArray()
               Salt = options.Salt }
@@ -128,6 +128,11 @@ module HashidConfiguration =
         >> shuffleAlphabet
         >> constructGuards
     
-    /// The default HashidConfiguration..
-    /// This configuration does not contain a salt and should be avoided.
+    /// The default HashidConfiguration.
+    /// Avoid using this configuration without changing the salt.
     let defaultConfiguration = create defaultOptions
+
+    /// Builds a new Hashid configuration based on a salt.
+    /// Use "create" to set multiple options.
+    let withSalt salt = 
+        create { defaultOptions with Salt = salt }

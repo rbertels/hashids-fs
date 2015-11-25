@@ -66,10 +66,10 @@ module Hashid =
             let prefix = shuffledAlphabet.[preIndex..]
             let postfix = shuffledAlphabet.[0..postIndex - 1]
             let resized = prefix + value + postfix
-            if resized.Length < config.MinimumHashLength then 
-                growHash (config.MinimumHashLength - resized.Length) shuffledAlphabet resized
+            if resized.Length < config.MinimumLength then 
+                growHash (config.MinimumLength - resized.Length) shuffledAlphabet resized
             else resized
-        match max (config.MinimumHashLength - hash.Length) 0 with
+        match max (config.MinimumLength - hash.Length) 0 with
         | 0 -> hash
         | 1 -> 
             let prefix = guardCharacter 0
@@ -95,7 +95,7 @@ module Hashid =
     let validateInput (numbers : array<int64>) =
         numbers |> Array.forall((<) 0L) && numbers.Length > 0
     
-    /// Encodes 64 bit numbers to a hash. 
+    /// Encodes 64 bit numbers to an id. 
     [<CompiledName("Encode")>]
     let encode64 (config : HashidConfiguration) (numbers : int64 []) = 
         match validateInput numbers with
@@ -109,10 +109,10 @@ module Hashid =
             let encoded = encodeNumbers config lottery numbers
             ensureMinimalLength config numberHash encoded.Alphabet encoded.Hash
             
-    /// Decodes 64 bit numbers from a hash.
+    /// Decodes 64 bit numbers from an id.
     [<CompiledName("Decode")>]
-    let decode64 (config : HashidConfiguration) (hash : string) = 
-        let hashCore = shrinkHash config hash
+    let decode64 (config : HashidConfiguration) (id : string) = 
+        let hashCore = shrinkHash config id
         match hashCore |> Seq.tryHead with
         | Some '\000' | None -> [||]
         | Some lottery ->
@@ -127,12 +127,12 @@ module Hashid =
             |> Array.skip 1
             |> Array.map (fun acc -> acc.Number)
     
-    /// Encodes 32 bit numbers to a hash. 
+    /// Encodes 32 bit numbers to an id. 
     [<CompiledName("Encode")>]
     let encode (config : HashidConfiguration) (numbers : int []) = 
         numbers |> Array.map int64 |> encode64 config
 
-    /// Decodes 32 bit numbers from a hash.
+    /// Decodes 32 bit numbers from an id.
     [<CompiledName("Decode")>]
-    let decode (config : HashidConfiguration) (hash : string) = 
-        decode64 config hash |> Array.map int
+    let decode (config : HashidConfiguration) (id : string) = 
+        decode64 config id |> Array.map int

@@ -10,7 +10,7 @@ Please visit http://hashids.org for implementations in other languages.
 open Hashids
 ```
 ### Create a configuration
-A HashidConfiguration stores the salt, minimum hash length, alphabet, and separators.
+A HashidConfiguration stores the salt, minimum id length, alphabet, and separators.
 ```fsharp
 let config = 
     HashidConfiguration.create 
@@ -33,10 +33,10 @@ let decode = Hashid.decode64 config
 ```
 ### Encode and decode numbers
 ```fsharp
-let hash = encode [| 73L; 88L |]
-let numbers = decode hash
+let id = encode [| 73L; 88L |]
+let numbers = decode id
 ```
-The resulting hash will be `rlVfvd`.
+The resulting id will be `rlVfvd`.
 
 ## Building
 Hashids-fs uses FAKE for building. (http://fsharp.github.io/FAKE/)
