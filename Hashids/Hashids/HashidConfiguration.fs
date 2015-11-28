@@ -63,12 +63,13 @@ module HashidConfiguration =
     let private filterOptions (options : HashidConfigurationOptions) = 
         let filteredSeparators = 
             options.Separators
-            |> Seq.filter (fun c -> options.Alphabet |> Seq.contains c)
+            |> Seq.filter (fun c -> options.Alphabet.IndexOf(c) > 0)
             |> toString
         
         let filteredAlphabet = 
             options.Alphabet
-            |> Seq.except filteredSeparators
+            |> Seq.filter(fun c -> filteredSeparators.IndexOf(c) < 0)
+            //|> Seq.except filteredSeparators
             |> toString
         
         { options with Separators = filteredSeparators
@@ -134,5 +135,6 @@ module HashidConfiguration =
 
     /// Builds a new Hashid configuration based on a salt.
     /// Use "create" to set multiple options.
+    [<CompiledName("Salt")>]
     let withSalt salt = 
         create { defaultOptions with Salt = salt }
