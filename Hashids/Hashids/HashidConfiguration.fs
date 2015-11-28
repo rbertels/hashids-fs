@@ -29,6 +29,7 @@ module HashidConfiguration =
     /// The default options used to create a HashidConfiguration.
     /// It is recommended to override at least the salt:
     /// { HashidConfiguration.defaultOptions with Salt = "this is my salt" }.
+    [<CompiledName("DefaultOptions")>]
     let defaultOptions = 
         { Salt = ""
           MinimumLength = 0
@@ -36,7 +37,6 @@ module HashidConfiguration =
           Separators = "cfhistuCFHISTU" }
     
     /// The configuration used for generating ids.
-    /// Avoid instantiating and instread create a valid configuration by using HashidConfiguration.create.
     type HashidConfiguration = 
         { /// The alphabet used to generate the ids.
           Alphabet : string
@@ -51,13 +51,14 @@ module HashidConfiguration =
     
     /// Validates if an alphabet meets the requirements.
     /// Throws an exception if the alphabet is invalid.
-    let validateAlphabet alphabet = 
+    let validateAlphabet (alphabet : seq<char>) = 
         match alphabet
               |> Seq.distinct
               |> Seq.truncate (MinimumAlphabetLength + 1)
               |> Seq.length with
         | 5 -> ()
         | _ -> failwith "Not enough unique alphabet characters"
+
 
     // Makes sure the separators were valid and removes them from the alphabet.
     let private filterOptions (options : HashidConfigurationOptions) = 
@@ -69,7 +70,6 @@ module HashidConfiguration =
         let filteredAlphabet = 
             options.Alphabet
             |> Seq.filter(fun c -> filteredSeparators.IndexOf(c) < 0)
-            //|> Seq.except filteredSeparators
             |> toString
         
         { options with Separators = filteredSeparators
@@ -96,8 +96,9 @@ module HashidConfiguration =
             else { options with Separators = options.Separators.[0..seplen - 1] }
         else options
 
-    // Shuffles the alphabet.
+    // Validates and shuffles the alphabet.
     let private shuffleAlphabet (options : HashidConfigurationOptions) = 
+        validateAlphabet options.Alphabet
         let shuffledAlphabet = consistentShuffle options.Alphabet options.Salt
         { options with Alphabet = shuffledAlphabet }
 
@@ -122,19 +123,25 @@ module HashidConfiguration =
               Salt = options.Salt }
     
     /// Validates the provided HashidConfigurationOptions and builds a new HashidConfiguration.
-    let create = 
-        filterOptions
-        >> shuffleSeparators
-        >> resizeOptions
-        >> shuffleAlphabet
-        >> constructGuards
-    
+    [<CompiledName("Create")>]
+    let create options = 
+        options 
+        |> (filterOptions
+            >> shuffleSeparators
+            >> resizeOptions
+            >> shuffleAlphabet
+            >> constructGuards)
+  
+    /// Validates the provided options and builds a new HashidConfiguration.
+    [<CompiledName("Create")>]
+    let withOptions (salt : string) (minimumLength : int) (alphabet: string) (separators : string) =
+        create { Salt = salt; MinimumLength = minimumLength; Alphabet = alphabet; Separators = separators }
+
+    /// Builds a new Hashid configuration based on a salt.
+    [<CompiledName("Create")>]
+    let withSalt salt = 
+        create { defaultOptions with Salt = salt }
+
     /// The default HashidConfiguration.
     /// Avoid using this configuration without changing the salt.
     let defaultConfiguration = create defaultOptions
-
-    /// Builds a new Hashid configuration based on a salt.
-    /// Use "create" to set multiple options.
-    [<CompiledName("Salt")>]
-    let withSalt salt = 
-        create { defaultOptions with Salt = salt }

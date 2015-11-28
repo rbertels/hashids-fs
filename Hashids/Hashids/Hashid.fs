@@ -92,12 +92,13 @@ module Hashid =
         | _ -> failwith "Illegal id"
 
     /// Validates the input numbers.
+    [<CompiledName("Validate")>]
     let validateInput (numbers : array<int64>) =
         numbers |> Array.forall((<) 0L) && numbers.Length > 0
     
     /// Encodes 64 bit numbers to an id. 
     [<CompiledName("Encode")>]
-    let encode64 (config : HashidConfiguration) (numbers : int64 []) = 
+    let encode64 (config : HashidConfiguration) ([<ParamArray>] numbers : int64 []) = 
         match validateInput numbers with
         | false -> String.Empty
         | true -> 
@@ -108,27 +109,9 @@ module Hashid =
             let lottery = pickCharacter config.Alphabet numberHash 
             let encoded = encodeNumbers config lottery numbers
             ensureMinimalLength config numberHash encoded.Alphabet encoded.Id
-            
-    /// Decodes 64 bit numbers from an id.
-//    [<CompiledName("Decode")>]
-//    let decode64 (config : HashidConfiguration) (id : string) = 
-//        let core = shrinkId config id
-//        match core |> Seq.tryHead with
-//        | Some '\000' | None -> [||]
-//        | Some lottery ->
-//            let prefix = string lottery + config.Salt
-//            core.Substring(1).Split(config.Separators)
-//            |> Array.scan (fun (acc : UnhashAccumulator) idpart -> 
-//                   let buffer = prefix + acc.Alphabet
-//                   let alphabet = consistentShuffle acc.Alphabet buffer.[0..acc.Alphabet.Length - 1]
-//                   { Alphabet = alphabet
-//                     Number = unhashNumber idpart alphabet }) { Alphabet = config.Alphabet
-//                                                                Number = 0L }
-//            |> Array.skip 1
-//            |> Array.map (fun acc -> acc.Number)
 
     /// Decodes 64 bit numbers from an id.
-    [<CompiledName("Decode")>]
+    [<CompiledName("Decode64")>]
     let decode64 (config : HashidConfiguration) (id : string) = 
         let core = shrinkId config id
         match core |> Seq.toList with
@@ -148,7 +131,7 @@ module Hashid =
 
     /// Encodes 32 bit numbers to an id. 
     [<CompiledName("Encode")>]
-    let encode (config : HashidConfiguration) (numbers : int []) = 
+    let encode (config : HashidConfiguration) ([<ParamArray>] numbers : int []) = 
         numbers |> Array.map int64 |> encode64 config
 
     /// Decodes 32 bit numbers from an id.
