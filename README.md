@@ -3,7 +3,7 @@ A hashids implementation in F#.
 It allows the encoding of one or more numbers into a single YouTube-like random string.
 Please visit http://hashids.org for implementations in other languages.
 
-## Usage in F#
+## Usage in F&#35;
 
 ### Open the Hashids namespace
 ```fsharp
@@ -41,7 +41,7 @@ let id = encode [| 73L; 88L |]
 let numbers = decode id
 ```
 The resulting id will be `rlVfvd`.
-## Usage in C#
+## Usage in C&#35;
 Using Hashids in C# is very similar to F# except for the currying.
 For a more object oriented approach please try Hashids.net (https://github.com/ullmark/hashids.net).
 ```csharp
