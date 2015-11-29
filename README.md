@@ -3,7 +3,7 @@ A hashids implementation in F#.
 It allows the encoding of one or more numbers into a single YouTube-like random string.
 Please visit http://hashids.org for implementations in other languages.
 
-## Usage
+## Usage in F#
 
 ### Open the Hashids namespace
 ```fsharp
@@ -14,7 +14,7 @@ A HashidConfiguration stores the salt, minimum id length, alphabet, and separato
 ```fsharp
 let config = 
     HashidConfiguration.create 
-        { Salt = "zupdog"
+        { Salt = "this is my salt"
           MinimumHashLength = 0
           Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
           Separators = "cfhistuCFHISTU" }
@@ -23,7 +23,11 @@ Alternatively, the values from the defaultOptions record can be modified.
 ```fsharp
 let config = 
     HashidConfiguration.create 
-        { HashidConfiguration.defaultOptions with Salt = "zupdog" }
+        { HashidConfiguration.defaultOptions with Salt = "this is my salt" }
+```
+If the only thing that needs changing is the salt, use `withSalt`.
+```fsharp
+let config = HashidConfiguration.withSalt "this is my salt"
 ```
 ### Create an encode and decode function
 Create curried versions of Hashid.encode64 and Hashid.decode64 with a baked in configuration.
@@ -37,6 +41,18 @@ let id = encode [| 73L; 88L |]
 let numbers = decode id
 ```
 The resulting id will be `rlVfvd`.
+## Usage in C#
+Using Hashids in C# is very similar to F# except for the currying.
+For a more object oriented approach please try Hashids.net (https://github.com/ullmark/hashids.net).
+```csharp
+var config = HashidConfiguration.Create("this is my salt");
+var id = Hashid.Encode(config, new int[] { 1, 2, 3 });
+var numbers = Hashid.Decode(config, id);
+```
+## Installation
+Install the package with NuGet.
+
+    Install-Package hashids-fs
 
 ## Building
 Hashids-fs uses FAKE for building. (http://fsharp.github.io/FAKE/)

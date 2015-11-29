@@ -51,6 +51,7 @@ module HashidConfiguration =
     
     /// Validates if an alphabet meets the requirements.
     /// Throws an exception if the alphabet is invalid.
+    [<CompiledName("ValidateAlphabet")>]
     let validateAlphabet (alphabet : seq<char>) = 
         match alphabet
               |> Seq.distinct
@@ -141,7 +142,3 @@ module HashidConfiguration =
     [<CompiledName("Create")>]
     let withSalt salt = 
         create { defaultOptions with Salt = salt }
-
-    /// The default HashidConfiguration.
-    /// Avoid using this configuration without changing the salt.
-    let defaultConfiguration = create defaultOptions
