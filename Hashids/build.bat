@@ -1,5 +1,3 @@
-@echo off
-cls
-".nuget\NuGet.exe" "Install" "FAKE" "-OutputDirectory" "packages" "-ExcludeVersion"
-"packages\FAKE\tools\Fake.exe" build.fsx
-pause
+dotnet build --configuration RELEASE
+dotnet test Hashids.Tests\Hashids.Tests.fsproj
+dotnet pack Hashids\Hashids.fsproj --configuration RELEASE --no-build --output ..\build

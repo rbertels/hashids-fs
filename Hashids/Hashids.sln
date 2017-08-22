@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Hashids", "Hashids\Hashids.fsproj", "{598173D9-1664-48C4-AE0A-F3A452C19C42}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Hashids", "Hashids\Hashids.fsproj", "{598173D9-1664-48C4-AE0A-F3A452C19C42}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Hashids.Tests", "Hashids.Tests\Hashids.Tests.fsproj", "{AC12BAFA-120C-466B-A85D-C83B03C5E934}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Hashids.Tests", "Hashids.Tests\Hashids.Tests.fsproj", "{AC12BAFA-120C-466B-A85D-C83B03C5E934}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B8DCFC49-1155-4011-B785-51D78B046EDE}"
 	ProjectSection(SolutionItems) = preProject
@@ -13,14 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		build.fsx = build.fsx
 		..\LICENSE = ..\LICENSE
 		..\README.md = ..\README.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{CE6C59AE-5960-43FF-AA8D-741000F8F024}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
 Global
@@ -40,5 +32,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9C3A40BF-DE03-4802-9727-DF99B64CD2E2}
 	EndGlobalSection
 EndGlobal
