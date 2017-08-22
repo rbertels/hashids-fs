@@ -54,7 +54,4 @@ Install the package with NuGet.
 
     Install-Package hashids-fs
 
-## Building
-Hashids-fs uses FAKE for building. (http://fsharp.github.io/FAKE/)
-Simply run `build.bat` and look for the files in the `build` folder.
 
