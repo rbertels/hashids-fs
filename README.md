@@ -3,6 +3,8 @@ A hashids implementation in F#.
 It allows the encoding of one or more numbers into a single YouTube-like random string.
 Please visit http://hashids.org for implementations in other languages.
 
+![alt text](https://ci.appveyor.com/api/projects/status/vxj71sajea928rl4?svg=true "Build status")
+
 ## Usage in F&#35;
 
 ### Open the Hashids namespace
